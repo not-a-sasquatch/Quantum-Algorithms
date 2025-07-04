@@ -2,7 +2,7 @@
 #include "globals.h"
 #include "simpleGates.h"
 #include "toffoli.h"
-#include "addition.h"
+#include "arithmetic.h"
 #include <iostream>
 
 
@@ -22,20 +22,13 @@ void QComp(std::vector<std::string> register0, std::vector<std::string> register
     } else if(n > ancillaQubits.size() + 4){
         std::cout << "Beep boop! QComp error - register0 size must be <= ancillas size + 4.\n";
     }
-    // Qubits storing result of comparator
-    //std::string lessThan = ancillas[0];
-    //std::string greaterThan = ancillas[1];
-    //std::string equality = ancillas[2];
     // Overflow/sign bits used in signed quantum subtraction/addition procedures
-    //std::string ancilla0 = ancillas[3];
-    //std::string ancilla1 = ancillas[4];
     std::string ancilla0 = ancillas[0];
     std::string ancilla1 = ancillas[1];
     // Need n-1 ancillas for (n+1)-qubit toffoli gate
-    //std::vector<std::string> ancillasToffoli(ancillas.begin() + 5, ancillas.end());
     std::vector<std::string> ancillasToffoli(ancillas.begin() + 2, ancillas.end());
     // Subtract reg1 from reg0, output stored in reg0, ancilla0 is now MSB of new reg0
-    subQFT_s(reg0, ancilla0, reg1);
+    NMsubQFT_s(reg0, ancilla0, reg1);
     // Compute comparator outputs
     cx(ancilla0, lessThan);
     x(ancilla0);
@@ -52,7 +45,7 @@ void QComp(std::vector<std::string> register0, std::vector<std::string> register
     }
     // Reverse computation
     // Add reg1 to new reg0, output stored in new reg0, ancilla1 is now MSB of new reg0
-    addQFT_s(reg0, ancilla1, reg1);
+    NMaddQFT_s(reg0, ancilla1, reg1);
     // Return sign bit of reg0 to original qubit
     swap(reg0[n-1], ancilla1);
 }

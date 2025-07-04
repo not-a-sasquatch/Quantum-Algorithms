@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "simpleGates.h"
 #include "arithmetic.h"
+#include "toffoli.h"
 #include <iostream>
 
 // Quantum absolute value
