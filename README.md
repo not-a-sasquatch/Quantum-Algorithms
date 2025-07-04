@@ -29,7 +29,7 @@ Long term:
 - Write lightweight simulator
 - Implement more algorithms 
 
-$,_     _
+$,_     _$
 $|\\_,-~/$
 $/ _  _ |    ,--.$
 $(  @  @ )  / ,-'$
