@@ -304,6 +304,15 @@ void divvalIP_s(std::vector<std::string> registerq, int N, std::string ancilla){
     // at this point, registerq[0:n-1] = input mod N, registerq[n:n+m-1] = input/N (quotient)
 }
 
+// Quantum divider with classical divisor (openQASM input), in-place division
+// Calculates q/N, for Quantum q (n+m qubits) and classical N (n bits)
+// results: regq[0:m-1] = q mod N, q[m:n+m-1] = floor(q/N)
+// Signed integers, LSB first
+// Modified from algorithm in https://arxiv.org/pdf/1801.01081
+void divcIP_s(std::vector<std::string> registerq, std::vector<std::string> registerc, std::string ancilla){
+    
+}
+
 // Uncompute quotient from the output from divval_s
 // This assumes N > 0 (?)
 // Does this handle signs correctly

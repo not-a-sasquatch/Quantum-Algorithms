@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "simpleGates.h"
 #include "toffoli.h"
+#include "arithmetic.h"
 #include "math.h"
 #include <iostream>
 
@@ -41,15 +42,25 @@ void modSARval(std::vector<std::string> registerq, std::vector<std::string> anci
 ////////////////////////////////////////
 // Modular multiplication for signed integers
 ////////////////////////////////////////
+// Multiply a quantum number by another quantum number modulus a quantum number
+// Signed integers, LSB first
+// Modifed from https://arxiv.org/pdf/1801.01081
+// Incomplete
+void modMul_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas){
+
+}
+
+
+
 // Multiply a quantum number by another quantum number modulus a classical number N (C++ input)
 // Signed integers, LSB first
 // Modifed from https://arxiv.org/pdf/1801.01081
 // Incomplete
-void modMulval_s(std::vector<std::string> register0, std::vector<std::string> register1, int N, std::vector<std::string> registerResult, std::vector<std::string> ancillaRegister){
+void modMulval_s(std::vector<std::string> register0, std::vector<std::string> register1, int N, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas){
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     std::vector<std::string> result = parseQregisterVector(registerResult);
-    std::vector<std::string> ancillas = parseQregisterVector(registerAncilla); 
+    std::vector<std::string> ancillas = parseQregisterVector(registerAncillas); 
 
     /////////////////////
     // need to check input sizes
@@ -77,18 +88,18 @@ void modMulval_s(std::vector<std::string> register0, std::vector<std::string> re
     // Division/Modulus stage
     modulusval_s(ancillasTemp, N, result, ancillasCalc);
     // Uncompute multiplication ancillas
-    mulMAC_s(reg0, reg1, ancillasCalc, ancillasTemp);
+    inverse(mulMAC_s, reg0, reg1, ancillasCalc, ancillasTemp);
 }
 
 // Multiply a quantum number by a classical number val (C++ input) modulus a quantum number N
 // Signed integers, LSB first
 // Modifed from https://arxiv.org/pdf/1801.01081
 // Incomplete
-void modMulval2_s(std::vector<std::string> registerq, int val, std::vector<std::string> registerN, std::vector<std::string> resultRegister, std::vector<std::string> ancillaRegister){
+void modMulval2_s(std::vector<std::string> registerq, int val, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas){
     std::vector<std::string> regq = parseQregisterVector(registerq);
     std::vector<std::string> regN = parseQregisterVector(registerN);
     std::vector<std::string> result = parseQregisterVector(registerResult);
-    std::vector<std::string> ancillas = parseQregisterVector(registerAncilla); 
+    std::vector<std::string> ancillas = parseQregisterVector(registerAncillas); 
 
     /////////////////////
     // need to check input sizes
@@ -111,11 +122,11 @@ void modMulval2_s(std::vector<std::string> registerq, int val, std::vector<std::
     std::vector<std::string> ancillasCalc(ancillas.begin() + n, ancillas.end());
 
     // Multiplication stage
-    mulMACval_s(reg0, val, ancillasCalc, ancillasTemp);
+    mulMACval_s(regq, val, ancillasCalc, ancillasTemp);
     // Division/Modulus stage (modulus_s not yet implemented)
     modulus_s(ancillasTemp, regN, result, ancillasCalc);
     // Uncompute multiplication
-    mulMACval_s(reg0, val, ancillasCalc, ancillasTemp);
+    inverse(mulMACval_s, regq, val, ancillasCalc, ancillasTemp);
 
 }
 
@@ -123,10 +134,10 @@ void modMulval2_s(std::vector<std::string> registerq, int val, std::vector<std::
 // Signed integers, LSB first
 // Modifed from https://arxiv.org/pdf/1801.01081
 // Incomplete
-void modMulval3_s(std::vector<std::string> registerq, int val, int N, std::vector<std::string> resultRegister, std::vector<std::string> ancillaRegister){
+void modMulval3_s(std::vector<std::string> registerq, int val, int N, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas){
     std::vector<std::string> regq = parseQregisterVector(registerq);
     std::vector<std::string> result = parseQregisterVector(registerResult);
-    std::vector<std::string> ancillas = parseQregisterVector(registerAncilla); 
+    std::vector<std::string> ancillas = parseQregisterVector(registerAncillas); 
 
     /////////////////////
     // need to check input sizes
@@ -150,10 +161,10 @@ void modMulval3_s(std::vector<std::string> registerq, int val, int N, std::vecto
     std::vector<std::string> ancillasCalc(ancillas.begin() + n, ancillas.end());
 
     // Multiplication stage
-    mulMACval_s(reg0, val, ancillasCalc, ancillasTemp);
+    mulMACval_s(regq, val, ancillasCalc, ancillasTemp);
     // Division/Modulus stage
     modulusval_s(ancillasTemp, N, result, ancillasCalc);
     // Uncompute multiplication
-    mulMACval_s(reg0, val, ancillasCalc, ancillasTemp);
+    inverse(mulMACval_s, regq, val, ancillasCalc, ancillasTemp);
 
 }

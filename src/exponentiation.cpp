@@ -33,7 +33,7 @@ void exp(std::vector<std::string> register0, std::vector<std::string> register1,
         x(copy1[i]);
     }
     std::vector<std::string> ancillaToffoli(ancilla.begin()+1,ancilla.begin()+m-1);
-    toffoli(copy,ancillaToffoli,flag);
+    toffoli_n(copy1,ancillaToffoli,flag);
     for(int i = 0; i < m; i++){
         x(copy1[i]);
     }

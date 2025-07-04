@@ -1,3 +1,11 @@
+#include "euclidean.h"
+#include "globals.h"
+#include "simpleGates.h"
+#include "toffoli.h"
+#include "comparison.h"
+#include "arithmetic.h"
+#include "math.h"
+#include <iostream>
 
 // Greatest common denominator between two quantum registers based on the extended Euclidean algorithm
 // Signed integers, LSB first
@@ -13,6 +21,8 @@ void gcd(std::vector<std::string> register0, std::vector<std::string> register1,
     std::string aEqualB = ancillas[2];
     std::string control = ancillas[3];
 
+    std::vector<std::string> counter;
+
     std::vector<std::string> compAncillas;
     std::vector<std::string> toffAncillas;
     std::vector<std::string> euclideanAncillas;
@@ -26,20 +36,20 @@ void gcd(std::vector<std::string> register0, std::vector<std::string> register1,
 
     // Max number of iterations
     // Verify max cutoff = 4.5*n
-    int cutoff = std::ceil(4.5*registerN.size()); 
+    int cutoff = std::ceil(4.5*register0.size()); 
 
     // Initialize registers (A0,A1),(B0,B2) = (0,reg0),(1,reg1)
-    for(int i = 0; i < regN.size(); i++){
+    for(int i = 0; i < reg0.size(); i++){
         cx(reg0[i], regA1[i]);
     }
-    for(int i = 0; i < regq.size(); i++){
+    for(int i = 0; i < reg1.size(); i++){
         cx(reg1[i], regB1[i]);
     }
     x(regB0[0]);
 
     // Compare A1, B1 and swap if necessary so that A1 > B1
     // Dont uncompute yet since will do this swap again at end of computation
-    QComp(regA, regB, aLessB, aGreatB, aEqualB, compAncillas);
+    QComp(regA1, regB1, aLessB, aGreatB, aEqualB, compAncillas);
     cswapn(aLessB, regA1, regB1);
 
 
@@ -162,7 +172,7 @@ void gcd(std::vector<std::string> register0, std::vector<std::string> register1,
 
     // Uncompute initial controlled-swap
     cswapn(aLessB, regA1, regB1);
-    inverse(QComp, regA, regB, aLessB, aGreatB, aEqualB, compAncillas);
+    inverse(QComp, regA1, regB1, aLessB, aGreatB, aEqualB, compAncillas);
     
     // Uncompute register initalization
     for(int i = 0; i < reg0.size(); i++){
@@ -186,6 +196,8 @@ void modularInverse(std::vector<std::string> registerq, std::vector<std::string>
     std::vector<std::string> ancillas = parseQregisterVector(registerAncillas);
 
     std::string control;
+
+    std::vector<std::string> counter;
     
     std::vector<std::string> toffAncillas;
     std::vector<std::string> euclideanAncillas;
@@ -323,8 +335,15 @@ void modularInverse(std::vector<std::string> registerq, std::vector<std::string>
 
 }
 
+// Quantum modular inverse algorithm based on the extended Euclidean algorithm, modulus a classical value (C++ input)
+// Signed integers, LSB first
+// https://arxiv.org/abs/quant-ph/0301141
+void modularInverseVal(std::vector<std::string> registerq, int N, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas){
+
+}
+
 // Assumes A1 >= B1
-void extEuclideanCycle(std::vector<std::string> registerA0, std::vector<std::string> registerA1, std::vector<std::string> registerB0, std::vector<std::string> registerB1, std::string control, std:vector<std::string> registerAncillas){
+void extEuclideanCycle(std::vector<std::string> registerA0, std::vector<std::string> registerA1, std::vector<std::string> registerB0, std::vector<std::string> registerB1, std::string control, std::vector<std::string> registerAncillas){
     std::vector<std::string> regA0 = parseQregisterVector(registerA0);
     std::vector<std::string> regA1 = parseQregisterVector(registerA1);
     std::vector<std::string> regB0 = parseQregisterVector(registerB0);
@@ -354,13 +373,13 @@ void extEuclideanCycle(std::vector<std::string> registerA0, std::vector<std::str
     // q -> q*B0
     cmulMAC_s(regQuotient, regB0, multAncillas, regMul, control);
     // A0 -> A0 - q*B0
-    csubQFT_s(regA0, regMul, control, subAncilla);
+    csubQFT_s(regA0, regMul, control, subAncillas);
     // q*B0 -> q
     inverse(cmulMAC_s, regQuotient, regB0, multAncillas, regMul, control);
     // q -> q*B1
     cmulMAC_s(regQuotient, regB1, multAncillas, regMul, control);
     // A1 -> A1 - q*B1
-    csubQFT_s(regA1, regMul, control, subAncilla);
+    csubQFT_s(regA1, regMul, control, subAncillas);
     // q*B1 -> q
     inverse(cmulMAC_s, regQuotient, regB1, multAncillas, regMul, control);
     // Uncompute q
@@ -372,12 +391,12 @@ void extEuclideanCycle(std::vector<std::string> registerA0, std::vector<std::str
     cswapn(control, regA1, regB1);
 }   
 
-void extEuclideanCycleFull(std::vector<std::string> registerA0, std::vector<std::string> registerA1, std::vector<std::string> registerB0, std::vector<std::string> registerB1, std::string control, std:vector<std::string> registerAncillas){
+void extEuclideanCycleFull(std::vector<std::string> registerA0, std::vector<std::string> registerA1, std::vector<std::string> registerB0, std::vector<std::string> registerB1, std::string control, std::vector<std::string> registerAncillas){
     std::vector<std::string> regA0 = parseQregisterVector(registerA0);
     std::vector<std::string> regA1 = parseQregisterVector(registerA1);
     std::vector<std::string> regB0 = parseQregisterVector(registerB0);
     std::vector<std::string> regB1 = parseQregisterVector(registerB1);
-    std::vector<std::string> ancillas = parseQregisterVector(registerAncilla); 
+    std::vector<std::string> ancillas = parseQregisterVector(registerAncillas); 
 
     std::string aLessB = ancillas[0];
     std::string aGreatB = ancillas[1];
@@ -389,12 +408,12 @@ void extEuclideanCycleFull(std::vector<std::string> registerA0, std::vector<std:
     std::vector<std::string> compAncillas;
     std::vector<std::string> quotientAncillas;
     std::vector<std::string> multAncillas;
-    std::string subAncilla;
+    std::vector<std::string> subAncilla;
     std::string toffAncilla;
 
     // need to implement control using toffoli
     // Compute comparison qubits
-    QComp(regA, regB, aLessB, aGreatB, aEqualB, compAncillas);
+    QComp(regA1, regB1, aLessB, aGreatB, aEqualB, compAncillas);
 
     // Computer A >= B qubit
     toffoli({control, aGreatB}, aGreatOrEqualB);

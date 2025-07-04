@@ -1,0 +1,6 @@
+{
+    "editor.suggest.showTypeParameters": true,
+    "breadcrumbs.showTypeParameters": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.inlayHints.enabled": "off"
+}

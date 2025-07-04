@@ -18,9 +18,9 @@ void QComp(std::vector<std::string> register0, std::vector<std::string> register
     std::vector<std::string> ancillaQubits = parseQregisterVector(ancillas);
     int n = reg0.size();
     if(n < reg1.size()){
-        std::cout << "Beep boop! QComp error - register0 size must be >= register1 size.\n"
+        std::cout << "Beep boop! QComp error - register0 size must be >= register1 size.\n";
     } else if(n > ancillaQubits.size() + 4){
-        std::cout << "Beep boop! QComp error - register0 size must be <= ancillas size + 4.\n"
+        std::cout << "Beep boop! QComp error - register0 size must be <= ancillas size + 4.\n";
     }
     // Qubits storing result of comparator
     //std::string lessThan = ancillas[0];

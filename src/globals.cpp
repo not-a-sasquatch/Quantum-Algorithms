@@ -89,11 +89,28 @@ void resetAllRegisters(){
 
 void setCregister(std::string reg, int value){
     std::string instruction = reg + " = " + std::to_string(value) + ";";
+    addInstruction(instruction);
 }
 
-void measureRegister(std::string Qreg, std::string Creg){
+void measureQubit(std::string Qreg, std::string Creg){
     std::string instruction = Creg + " = measure " + Qreg;
     addInstruction(instruction);
+}
+
+void measureRegister(std::vector<std::string> registerQuantum, std::vector<std::string> registerClassical){
+    std::vector<std::string> regq = parseQregisterVector(registerQuantum);
+    std::vector<std::string> regc = parseCregisterVector(registerClassical);
+    int q = regq.size();
+    int c = regc.size();
+    if(q != c){
+        std::cout << "beep boop - measureRegister error! register sizes don't match\n";
+        return;
+    }
+    for(int i = 0; i < q; i++){
+        std::string instruction = regc[i] + " = measure " + regq[i];
+        addInstruction(instruction);
+    }
+    
 }
 
 void addInstruction(std::string instruction){
@@ -130,6 +147,31 @@ std::vector<std::string> parseCregisterVector(std::vector<std::string> registers
         }
     }
     return bits;
+}
+
+void qasmIf(std::string condition){
+    std::string instruction = "if (" + condition + ") {";
+    addInstruction(instruction);
+}
+
+void qasmElse(){
+    std::string instruction = "} else {";
+    addInstruction(instruction);
+}
+
+void qasmFor(std::string condition){
+    std::string instruction = "for (" + condition + ") {";
+    addInstruction(instruction);
+}
+
+void qasmEndIf(){
+    std::string instruction = "}";
+    addInstruction(instruction);
+}
+
+void qasmEndFor(){
+    std::string instruction = "}";
+    addInstruction(instruction);
 }
 
 void printAlg(){

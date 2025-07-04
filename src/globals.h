@@ -27,13 +27,25 @@ void resetRegister(std::string reg);
 
 void resetAllRegisters();
 
-void setCregister(std::string reg);
+void setCregister(std::string reg, int value);
 
-void measureRegister(std::string Qreg, std::string Creg);
+void measureQubit(std::string Qreg, std::string Creg);
+
+void measureRegister(std::vector<std::string> registerQuantum, std::vector<std::string> registerClassical);
 
 std::vector<std::string> parseQregisterVector(std::vector<std::string> registers);
 
 std::vector<std::string> parseCregisterVector(std::vector<std::string> registers);
+
+void qasmIf(std::string condition);
+
+void qasmElse();
+
+void qasmFor(std::string condition);
+
+void qasmEndIf();
+
+void qasmEndFor();
 
 void printAlg();
 

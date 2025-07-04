@@ -2,10 +2,17 @@
 #include <vector>
 #include "addition.h"
 #include "multiplication.h"
+#include "division.h"
+#include "exponentiation.h"
+#include "modularAddition.h"
+#include "modularMultiplication.h"
+#include "modularExponentiation.h"
 
-void twosComplement(std::vector<std::string> registerq);
+void QTC(std::vector<std::string> registerq);
 
-void twosComplementc(std::vector<int> binArray);
+void cQTC(std::vector<std::string> registerq, std::string control);
+
+void CTC(std::vector<int> binArray);
 
 std::vector<int> intToBinArray(int value, int depth);
 

@@ -10,11 +10,7 @@ void QTC(std::vector<std::string> registerq){
         x(registerq[i]);
     }
     // add 1
-    std::vector<int> bitarray = {1};
-    for(int i = 1; i < registerq.size(); i++){
-        bitarray.push_back(0);
-    }
-    addQFTval(registerq, bitarray);
+    addQFTval(registerq, 1);
 }
 
 // Quantum two's complement circuit with single qubit control
@@ -24,11 +20,7 @@ void cQTC(std::vector<std::string> registerq, std::string control){
         cx(control, registerq[i]);
     }
     // add 1
-    std::vector<int> bitarray = {1};
-    for(int i = 1; i < registerq.size(); i++){
-        bitarray.push_back(0);
-    }
-    caddQFTval(registerq, control, bitarray);
+    caddQFTval(registerq, control, 1);
 }
 
 // Converts a classical integer value (C++) to a binary array

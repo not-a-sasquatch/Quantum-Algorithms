@@ -5,9 +5,8 @@
 #include "toffoli.h"
 #include <iostream>
 
-// Quantum Fourier transform
+// Quantum Fourier transform over Z_2^n, where n is the length of the input quantum register
 // LSB first
-// The significance-order of the bits is reversed in the outputs (?)
 void qft(std::vector<std::string> registers){
     std::vector<std::string> qubits = parseQregisterVector(registers);
     int n = qubits.size();
@@ -20,9 +19,8 @@ void qft(std::vector<std::string> registers){
     }
 }
 
-// Quantum Fourier transform
+// Quantum Fourier transform, where n is the length of the input quantum register, with single qubit control
 // LSB first
-// The significance-order of the bits is reversed in the outputs (?)
 void cqft(std::vector<std::string> registers, std::string control, std::string ancilla){
     std::vector<std::string> qubits = parseQregisterVector(registers);
     int n = qubits.size();
@@ -38,7 +36,7 @@ void cqft(std::vector<std::string> registers, std::string control, std::string a
     }
 }
 
-// Quantum Fourier transform approximated to k-qubit accuracy
+// Quantum Fourier transform over 2^n, where n is the length of the input quantum register, approximated to k-qubit accuracy
 void qftApprox(std::vector<std::string> registers, int k){
     std::vector<std::string> qubits = parseQregisterVector(registers);
     int n = qubits.size();
@@ -52,4 +50,16 @@ void qftApprox(std::vector<std::string> registers, int k){
             
         }
     }
+}
+
+// Quantum Fourier transform over Z_N
+// LSB first
+void qftn(std::vector<std::string> registers, int N){
+    
+}
+
+// Quantum Fourier transform over Z_N, with single qubit control
+// LSB first
+void cqftn(std::vector<std::string> registers, int N, std::string control){
+    
 }

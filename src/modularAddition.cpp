@@ -2,6 +2,9 @@
 #include "globals.h"
 #include "simpleGates.h"
 #include "toffoli.h"
+#include "qft.h"
+#include "arithmetic.h"
+#include "math.h"
 #include <iostream>
 
 ////////////////////////////////////////
@@ -44,7 +47,7 @@ void addQFT(std::vector<std::string> register0, std::vector<std::string> registe
 // Draper QFT adder
 // Unsigned integers, LSB first
 // In-place addition, result stored in register0
-void caddQFT(std::vector<std::string> register0, std::vector<std::string> register1, std::string control, std:string ancilla){
+void caddQFT(std::vector<std::string> register0, std::vector<std::string> register1, std::string control, std::string ancilla){
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);   
     int n = reg0.size();
@@ -116,7 +119,7 @@ void subQFT(std::vector<std::string> register0, std::vector<std::string> registe
 // Draper QFT adder
 // Unsigned integers, LSB first
 // In-place subtraction, result stored in register0
-void csubQFT(std::vector<std::string> register0, std::vector<std::string> register1, std::string control, std:string ancilla){
+void csubQFT(std::vector<std::string> register0, std::vector<std::string> register1, std::string control, std::string ancilla){
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);   
     int n = reg0.size();
@@ -171,16 +174,20 @@ void addQFTc(std::vector<std::string> registerq, std::vector<std::string> regist
         if(i >= m){
             for(int j = m-1; j >= 0; j--){
                 double theta = pi / pow(2,i - j + 1);
-                if(regc[j] > 0){
+                //if(regc[j] > 0){
+                qasmIf(regc[j] + " == 1");
                     phase(theta, regq[i]);
-                }
+                qasmEndIf();
+                //}
             }
         } else {
             for(int j = i; j >= 0; j--){
                 double theta = pi / pow(2,i - j + 1);
-                if(regc[j] > 0){
+                //if(regc[j] > 0){
+                qasmIf(regc[j] + " == 1");
                     phase(theta, regq[i]);
-                }
+                qasmEndIf();
+                //}
             }
         }
     }
@@ -228,7 +235,7 @@ void addQFTval(std::vector<std::string> registerq, int N){
 // Draper QFT adder
 // Unsigned integers, LSB first
 // In-place addition, result stored in registerq
-void caddQFTval(std::vector<std::string> registerq, std::string control, int N){
+void caddQFTval(std::vector<std::string> registerq, std::string control, std::string ancilla, int N){
     std::vector<std::string> regq = parseQregisterVector(registerq);  
 
     int m = regq.size();
@@ -240,7 +247,7 @@ void caddQFTval(std::vector<std::string> registerq, std::string control, int N){
         return;
     }
     // Quantum Fourier transform
-    cqft(regq. control);
+    cqft(regq, control, ancilla);
     // Evolve phases of Fourier transformed state
     for(int i = 0; i < m; i--){
         if(i >= n){
@@ -260,7 +267,84 @@ void caddQFTval(std::vector<std::string> registerq, std::string control, int N){
         }
     }
     // Inverse quantum Fourier transform
-    inverse(cqft, regq, control);
+    inverse(cqft, regq, control, ancilla);
+}
+
+// Quantum Fourier transform n-bit subtraction with classical input (C++ function input), modular 2^n
+// Draper QFT subtraction
+// Unsigned integers, LSB first
+// In-place addition, result stored in registerq
+void subQFTval(std::vector<std::string> registerq, int N){
+    std::vector<std::string> regq = parseQregisterVector(registerq);  
+    int m = regq.size();
+    int n = std::ceil(std::log2(N));
+    std::vector<int> binArrayN = intToBinArray_s(N, n);
+    // check input sizes
+    if(m < n){
+        std::cout << "Beep boop - addQFTval error! register q size must be >= bitarray size.\n";
+        return;
+    }
+    // Quantum Fourier transform
+    qft(regq);
+    // Evolve phases of Fourier transformed state
+    for(int i = 0; i < m; i--){
+        if(i >= n){
+            for(int j = n-1; j >= 0; j--){
+                double theta = -1 * pi / pow(2,i - j + 1);
+                if(binArrayN[j] > 0){
+                    phase(theta, regq[i]);
+                }
+            }
+        } else {
+            for(int j = i; j >= 0; j--){
+                double theta = -1 * pi / pow(2,i - j + 1);
+                if(binArrayN[j] > 0){
+                    phase(theta, regq[i]);
+                }
+            }
+        }
+    }
+    // Inverse quantum Fourier transform
+    inverse(qft, regq);
+}
+
+// Quantum Fourier transform n-bit subtraction with classical input (C++ function input) and single qubit control
+// Draper QFT subtraction
+// Unsigned integers, LSB first
+// In-place addition, result stored in registerq
+void csubQFTval(std::vector<std::string> registerq, std::string control, std::string ancilla, int N){
+    std::vector<std::string> regq = parseQregisterVector(registerq);  
+
+    int m = regq.size();
+    int n = std::ceil(std::log2(N));
+    std::vector<int> binArrayN = intToBinArray_s(N, n);
+    // check input sizes
+    if(m < n){
+        std::cout << "Beep boop - caddQFTval error! register q size must be >= bitarray size.\n";
+        return;
+    }
+    // Quantum Fourier transform
+    cqft(regq, control, ancilla);
+    // Evolve phases of Fourier transformed state
+    for(int i = 0; i < m; i--){
+        if(i >= n){
+            for(int j = n-1; j >= 0; j--){
+                double theta = -1 * pi / pow(2,i - j + 1);
+                if(binArrayN[j] > 0){
+                    cphase(theta, control, regq[i]);
+                }
+            }
+        } else {
+            for(int j = i; j >= 0; j--){
+                double theta = -1 * pi / pow(2,i - j + 1);
+                if(binArrayN[j] > 0){
+                    cphase(theta, control, regq[i]);
+                }
+            }
+        }
+    }
+    // Inverse quantum Fourier transform
+    inverse(cqft, regq, control, ancilla);
 }
 
 ////////////////////////////////////////
@@ -319,10 +403,10 @@ void addQFTval_s(std::vector<std::string> registerq, int N){
 // Signed integers, LSB first
 // In-place addition, result stored in register0
 // Incomplete
-void caddQFTval_s(std::vector<std::string> registerq, int N, std::string control){
+void caddQFTval_s(std::vector<std::string> registerq, std::string control, std::string ancilla, int N){
     std::vector<std::string> regq = parseQregisterVector(registerq); 
 
-    caddQFTval(regq, N, control);
+    caddQFTval(regq, control, ancilla, N);
 }
 
 // Quantum Fourier transform n-bit subtraction, modular 2^n
@@ -349,7 +433,7 @@ void subQFT_s(std::vector<std::string> register0, std::vector<std::string> regis
 // Signed integers, LSB first
 // In-place subtraction, result stored in register0
 // Incomplete
-void csubQFT_s(std::vector<std::string> register0, std::vector<std::string> register1, stcsubQFT_sd::string control, std::string ancilla){
+void csubQFT_s(std::vector<std::string> register0, std::vector<std::string> register1, std::string control, std::string ancilla){
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);   
     int n = reg0.size();
@@ -368,7 +452,7 @@ void csubQFT_s(std::vector<std::string> register0, std::vector<std::string> regi
 // Signed integers, LSB first
 // In-place subtraction, result stored in register0
 // Incomplete
-void subQFTval_s(std::vector<std::string> register0, int N){
+void subQFTval_s(std::vector<std::string> registerq, int N){
     std::vector<std::string> regq = parseQregisterVector(registerq);
 
     subQFTval(regq, N);
@@ -380,39 +464,10 @@ void subQFTval_s(std::vector<std::string> register0, int N){
 // Unsigned integers, LSB first
 // In-place subtraction, result stored in registerq
 // incomplete
-void csubQFTval_s(std::vector<std::string> registerq, std::string control, int N){
+void csubQFTval_s(std::vector<std::string> registerq, std::string control, std::string ancilla, int N){
     std::vector<std::string> regq = parseQregisterVector(registerq);  
 
-    int m = regq.size();
-    int n = std::ceil(std::log2(N));
-    std::vector<int> binArrayN = intToBinArray_s(N, n);
-    // check input sizes
-    if(m < n){
-        std::cout << "Beep boop - caddQFTval error! register q size must be >= bitarray size.\n";
-        return;
-    }
-    // Quantum Fourier transform
-    cqft(regq. control);
-    // Evolve phases of Fourier transformed state
-    for(int i = 0; i < m; i--){
-        if(i >= n){
-            for(int j = n-1; j >= 0; j--){
-                double theta = pi / pow(2,i - j + 1);
-                if(binArrayN[j] > 0){
-                    cphase(theta, control, regq[i]);
-                }
-            }
-        } else {
-            for(int j = i; j >= 0; j--){
-                double theta = pi / pow(2,i - j + 1);
-                if(binArrayN[j] > 0){
-                    cphase(theta, control, regq[i]);
-                }
-            }
-        }
-    }
-    // Inverse quantum Fourier transform
-    inverse(cqft, regq, control);
+    csubQFTval(regq, control, ancilla, N);
 }
 
 ////////////////////////////////////////
@@ -422,8 +477,8 @@ void csubQFTval_s(std::vector<std::string> registerq, std::string control, int N
 // Signed integers, LSB first
 // reg0 + reg1 mod regM, all inputs quantum
 // Modified from https://arxiv.org/pdf/1801.01081
-void addMod_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerM, std::vector<std::string> ancillaRegisters){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
+void addMod_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerM, std::vector<std::string> registerAncillas){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     std::vector<std::string> regM = parseQregisterVector(registerM);
@@ -447,8 +502,8 @@ void addMod_s(std::vector<std::string> register0, std::vector<std::string> regis
 
 // Modular addition of two quantum registers with classical modulus N (C++ input)
 // Incomplete
-void addModval_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> ancilla, int N){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
+void addModval_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerAncillas, int N){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     int n = reg0.size();
@@ -462,7 +517,7 @@ void addModval_s(std::vector<std::string> register0, std::vector<std::string> re
     subQFTval_s(reg0, N);
     // Controlled re-addition of regM
     cx(reg0[n-1], ancillaSign);
-    caddQFTval_s(reg0, N, ancillaSign);
+    caddQFTval_s(reg0, ancillaSign, ancillaAdd, N);
     // Uncompute ancillaSign by subtracting then re-adding reg1 (this part assumes reg0, reg1 < N so that (reg0 + reg1) - reg1 - N < 0) 
     subQFT_s(reg0, reg1);
     cx(reg0[n-1], ancillaSign);
@@ -471,31 +526,31 @@ void addModval_s(std::vector<std::string> register0, std::vector<std::string> re
 
 // Modular addition of classical integer val (C++ input) into quantum register with classical modulus N (C++ inputs)
 // Incomplete
-void addModval2_s(std::vector<std::string> registerq, std::vector<std::string> ancilla, int val, int N){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
-    std::vector<std::string> regq = parseQregisterVector(register0);
-    int n = reg0.size();
+void addModval2_s(std::vector<std::string> registerq, std::vector<std::string> registerAncillas, int val, int N){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
+    std::vector<std::string> regq = parseQregisterVector(registerq);
+    int n = regq.size();
     // check input sizes
 
     std::string ancillaSign = ancilla[0];
     std::string ancillaAdd = ancilla[1];
 
-    addQFTval_s(reg0, val);
+    addQFTval_s(regq, val);
     // Trial subtraction of regM
-    subQFTval_s(reg0, N);
+    subQFTval_s(regq, N);
     // Controlled re-addition of regM
-    cx(reg0[n-1], ancillaSign);
-    caddQFTval_s(reg0, N, ancillaSign);
+    cx(regq[n-1], ancillaSign);
+    caddQFTval_s(regq, ancillaSign, ancillaAdd, N);
     // Uncompute ancillaSign by subtracting then re-adding reg1 (this part assumes regq, val < N so that (regq + val) - val - N < 0) 
-    subQFTval_s(reg0, val);
-    cx(reg0[n-1], ancillaSign);
-    addQFTval_s(reg0, val);
+    subQFTval_s(regq, val);
+    cx(regq[n-1], ancillaSign);
+    addQFTval_s(regq, val);
 }
 
 // Controlled modular addition into quantum register with quantum modulus 
 // Incomplete
-void caddMod_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerM, std::vector<std::string> ancillaRegisters, std::string control){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
+void caddMod_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerM, std::vector<std::string> registerAncillas, std::string control){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     std::vector<std::string> regM = parseQregisterVector(registerM);
@@ -521,8 +576,8 @@ void caddMod_s(std::vector<std::string> register0, std::vector<std::string> regi
 
 // Controlled modular addition of classical integer val (C++ input) into quantum register with classical modulus N (C++ inputs)
 // Incomplete
-void caddModval_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> ancilla, int N, std::string control){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
+void caddModval_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerAncillas, int N, std::string control){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     int n = reg0.size();
@@ -533,22 +588,22 @@ void caddModval_s(std::vector<std::string> register0, std::vector<std::string> r
 
     caddQFT(reg0, reg1, control, ancillaAdd);
     // Trial subtraction of regM
-    csubQFTval(reg0, N, control);
+    csubQFTval(reg0, control, ancillaAdd, N);
     // Controlled re-addition of regM
     toffoli({control, reg0[n-1]}, ancillaSign);
     //cx(reg0[n-1], ancillaSign);
-    caddQFTval(reg0, N, ancillaSign);
+    caddQFTval(reg0, ancillaSign, ancillaAdd, N);
     // Uncompute ancillaSign by subtracting then re-adding reg1 (this part assumes reg0, reg1 < N so that (reg0 + reg1) - reg1 - N < 0) 
-    csubQFT(reg0, reg1, control);
+    csubQFT(reg0, reg1, control, ancillaAdd);
     toffoli({control, reg0[n-1]}, ancillaSign);
     //cx(reg0[n-1], ancillaSign);
-    caddQFT(reg0, reg1, control);
+    caddQFT(reg0, reg1, control, ancillaAdd);
 }
 
 // Modular subtraction into quantum register with classical modulus N (C++ inputs)
 // Incomplete
-void subModval_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> ancilla, int N){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
+void subModval_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerAncillas, int N){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     int n = reg0.size();
@@ -562,7 +617,7 @@ void subModval_s(std::vector<std::string> register0, std::vector<std::string> re
     subQFTval_s(reg0, N);
     // Controlled re-addition of regM
     cx(reg0[n-1], ancillaSign);
-    caddQFTval_s(reg0, N, ancillaSign);
+    caddQFTval_s(reg0, ancillaSign, ancillaAdd, N);
     // Uncompute ancillaSign by subtracting then re-adding reg1 (this part assumes reg0, reg1 < N so that (reg0 - reg1) + reg1 - N < 0) 
     addQFT_s(reg0, reg1);
     cx(reg0[n-1], ancillaSign);
@@ -571,8 +626,8 @@ void subModval_s(std::vector<std::string> register0, std::vector<std::string> re
 
 // Controlled modular subtraction of classical integer val (C++ input) into quantum register with classical modulus N (C++ inputs)
 // Incomplete
-void csubModval(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> ancilla, std::string control, int N){
-    std::vector<std::string> ancilla = parseQregisterVector(ancillaRegisters);
+void csubModval(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerAncillas, std::string control, int N){
+    std::vector<std::string> ancilla = parseQregisterVector(registerAncillas);
     std::vector<std::string> reg0 = parseQregisterVector(register0);
     std::vector<std::string> reg1 = parseQregisterVector(register1);
     int n = reg0.size();
@@ -583,15 +638,15 @@ void csubModval(std::vector<std::string> register0, std::vector<std::string> reg
 
     csubQFT(reg0, reg1, control, ancillaAdd);
     // Trial subtraction of regM
-    csubQFTval(reg0, N, control);
+    csubQFTval(reg0, control, ancillaAdd, N);
     // Controlled re-addition of regM
     toffoli({control, reg0[n-1]}, ancillaSign);
     //cx(reg0[n-1], ancillaSign);
-    caddQFTval(reg0, N, ancillaSign);
+    caddQFTval(reg0, ancillaSign, ancillaAdd, N);
     // Uncompute ancillaSign by subtracting then re-adding reg1 (this part assumes reg0, reg1 < N so that (reg0 - reg1) + reg1 - N < 0) 
-    caddQFT(reg0, reg1, control);
+    caddQFT(reg0, reg1, control, ancillaAdd);
     toffoli({control, reg0[n-1]}, ancillaSign);
     //cx(reg0[n-1], ancillaSign);
-    csubQFT(reg0, reg1, control);
+    csubQFT(reg0, reg1, control, ancillaAdd);
 }
 
