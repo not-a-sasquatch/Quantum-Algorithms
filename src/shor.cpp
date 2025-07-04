@@ -61,7 +61,7 @@ void discreteLog(std::vector<std::string> registerx, std::vector<std::string> re
     // Measure 3rd register
     measureRegister(reg2, regc);
 
-    // Uncompute 3rd register and clear regc
+    // Clear 3rd register and clear regc
     for(int i = 0; i < reg2.size(); i++){
         qasmIf(regc[i] + " == 1");
             x(reg2[i]);
@@ -84,6 +84,7 @@ void discreteLog(std::vector<std::string> registerx, std::vector<std::string> re
     x(result[result.size()-1]);
     std::vector<std::string> resultData(result.begin(), result.end()-1);
     QTC(resultData);
+    // Or should this be log_g(x) = N - (-log_g(x)) mod N
 
     // Uncompute v^-1
     inverse(modularInverseVal, reg1, N, reg1Inv, ancillaModInv);
@@ -91,13 +92,11 @@ void discreteLog(std::vector<std::string> registerx, std::vector<std::string> re
     // Measure 2nd register
     measureRegister(reg1, regc);
 
-    // Uncompute 2nd register and clear regc
+    // Clear 2nd register and clear regc
     for(int i = 0; i < reg1.size(); i++){
         qasmIf(regc[i] + " == 1");
             x(reg1[i]);
             setCregister(regc[i], 0);
         qasmEndIf();
     }
-
-
 }

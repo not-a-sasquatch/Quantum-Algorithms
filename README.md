@@ -13,3 +13,14 @@ A collection of C++ code which generates OpenQASM code (a programming language d
 OpenQASM documentation:
 https://openqasm.com/ 
 
+## TO DO
+Near term:
+- Fix errors in exponential.cpp & euclidean.cpp
+- Implement uniform distribution Z_n
+- Implement QFT Z_n
+- Implement modular exponentiation
+- Implement misc helper fucntions (classical modular inverse, int to binary array)
+- Implement input size checks on all functions
+- Implement Shor's factoring algorithm
+- Impement division/divcIP_s
+

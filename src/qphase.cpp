@@ -17,7 +17,7 @@ void qphase(std::vector<std::string> registerPhase, std::string target, std::str
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -40,7 +40,7 @@ void qphase(std::vector<std::string> registerPhase, std::string target, std::str
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 }
 
 // Controlled-phase gate on a single qubit [[1,0];[0,e^(i*x*s)]], where x is an n-qubit signed quantum register [-2^(n-1), 2^(n-1)-1] and is scaled as 1/2^(n-1),
@@ -56,10 +56,11 @@ void cqphase(std::vector<std::string> registerPhase, std::string target, std::ve
 
     std::string ancillaToff = ancillas[0];
     std::string ancillaControl = ancillas[0];
+    std::string ancillaQTC = ancillas[0];
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -82,5 +83,5 @@ void cqphase(std::vector<std::string> registerPhase, std::string target, std::ve
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 }

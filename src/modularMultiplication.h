@@ -2,7 +2,7 @@
 #include <vector>
 
 
-void modSARval(std::vector<std::string> registerq, std::vector<std::string> ancillaRegister, int N);
+void modSARval(std::vector<std::string> registerq, std::vector<std::string> registerAncillas, int N);
 
 void modMul_s(std::vector<std::string> register0, std::vector<std::string> register1, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas);
 

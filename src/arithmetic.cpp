@@ -15,12 +15,12 @@ void QTC(std::vector<std::string> registerq){
 
 // Quantum two's complement circuit with single qubit control
 // LSB first
-void cQTC(std::vector<std::string> registerq, std::string control){
+void cQTC(std::vector<std::string> registerq, std::string control, std::string ancilla){
     for(int i = 0; i < registerq.size(); i++){
         cx(control, registerq[i]);
     }
     // add 1
-    caddQFTval(registerq, control, 1);
+    caddQFTval(registerq, control, ancilla, 1);
 }
 
 // Converts a classical integer value (C++) to a binary array

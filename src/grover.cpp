@@ -34,7 +34,7 @@ void grover(std::vector<std::string> workRegisters, std::vector<std::string> rea
 
     // Measurement
     for(int i = 0; i < numWorkQubits; i++){
-        measureRegister(workQubits[i], readoutBits[i]);
+        measureQubit(workQubits[i], readoutBits[i]);
     }
 }
 

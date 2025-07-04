@@ -10,7 +10,7 @@
 
 void QTC(std::vector<std::string> registerq);
 
-void cQTC(std::vector<std::string> registerq, std::string control);
+void cQTC(std::vector<std::string> registerq, std::string control, std::string ancilla);
 
 void CTC(std::vector<int> binArray);
 

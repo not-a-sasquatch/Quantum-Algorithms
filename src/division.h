@@ -3,23 +3,31 @@
 
 void div_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::string registerAncilla, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus);
 
-void divval_s(std::vector<std::string> registerq, int N, std::string ancilla, std::vector<std::string> registerDivisor, std::vector<std::string> registerModulus);
+void cdiv_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerAncillas, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, std::string control);
 
-void divvalIP_s(std::vector<std::string> registerq, int N, std::string ancilla);
+void divval_s(std::vector<std::string> registerq, int N, std::vector<std::string> registerAncillas, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus);
 
-void uncomputeQuotientval_s(std::vector<std::string> registerq, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, int N, std::vector<std::string> ancilla);
+void divvalIP_s(std::vector<std::string> registerq, int N, std::vector<std::string> registerAncillas);
 
-void uncomputeQuotient_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, std::vector<std::string> ancillaRegister);
+void divcIP_s(std::vector<std::string> registerq, std::vector<std::string> registerc, std::vector<std::string> registerAncillas);
 
-void uncomputeModulusval_s(std::vector<std::string> registerq, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, int N, std::vector<std::string> ancillaRegister);
+void uncomputeQuotientval_s(std::vector<std::string> registerq, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, int N, std::vector<std::string> registerAncillas);
 
-void uncomputeModulus_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, std::vector<std::string> ancillaRegister);
+void uncomputeQuotient_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, std::vector<std::string> registerAncillas);
 
-void quotient_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> ancillaRegister);
+void uncomputeModulusval_s(std::vector<std::string> registerq, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, int N, std::vector<std::string> registerAncillas);
 
-void modulus_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> ancillaRegister);
+void uncomputeModulus_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, std::vector<std::string> registerAncillas);
 
-void quotientval_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> ancillaRegister);
+void cuncomputeModulus_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerQuotient, std::vector<std::string> registerModulus, std::vector<std::string> registerAncillas, std::string control);
 
-void modulusval_s(std::vector<std::string> registerq, int N, std::vector<std::string> registerResult, std::vector<std::string> ancillaRegister);
+void quotient_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas);
+
+void cquotient_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas, std::string control);
+
+void modulus_s(std::vector<std::string> registerq, std::vector<std::string> registerN, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas);
+
+void quotientval_s(std::vector<std::string> registerq, int N, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas);
+
+void modulusval_s(std::vector<std::string> registerq, int N, std::vector<std::string> registerResult, std::vector<std::string> registerAncillas);
 

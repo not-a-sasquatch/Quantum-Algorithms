@@ -19,7 +19,7 @@ void exp(std::vector<std::string> register0, std::vector<std::string> register1,
     std::string flag = ancilla[0];
     std::vector<std::string> garbage(ancilla.begin()+1, ancilla.begin()+n+m);
     std::vector<int> subArray = {1};
-    for(int i = 1; i < m: i++){
+    for(int i = 1; i < m; i++){
         subArray.push_back(0);
     }
     
@@ -37,7 +37,7 @@ void exp(std::vector<std::string> register0, std::vector<std::string> register1,
     for(int i = 0; i < m; i++){
         x(copy1[i]);
     }
-    std::vector<std::string> ancillaMult(ancilla.begin()+1,ancilla.begin()+m-1); (?)
+    std::vector<std::string> ancillaMult(ancilla.begin()+1,ancilla.begin()+m-1); //(?)
     // Quantum multiplication loop, multiplies reg0 into result, subtracts 1 from copy1, repeats until copy1 equals 0.
     // Repeats up to cutoff (maximum possible exponent)
     for(int j = 0; j <= cutoff; j++){

@@ -11,11 +11,12 @@
 // Source: High Performance Quantum Modular Multipliers, R. Rines, I. Chuang, https://arxiv.org/pdf/1801.01081
 // TO DO: Verify LSB first
 // Incomplete
-void modSARval(std::vector<std::string> registerq, std::vector<std::string> ancillaRegister, int N){
-    std::vector<std::string> ancillaReg = parseQregisterVector(ancillaRegister);
-    std::string ancilla0 = ancillaReg[0];
-    std::string ancilla1 = ancillaReg[1];
+void modSARval(std::vector<std::string> registerq, std::vector<std::string> registerAncillas, int N){
     std::vector<std::string> regq = parseQregisterVector(registerq);
+    std::vector<std::string> ancillas = parseQregisterVector(registerAncillas);
+    std::string ancilla0 = ancillas[0];
+    std::string ancilla1 = ancillas[1];
+    std::string ancillaAdd = ancillas[2];
 
     /////////////////////
     // need to check input sizes
@@ -26,12 +27,12 @@ void modSARval(std::vector<std::string> registerq, std::vector<std::string> anci
 
     regq.push_back(ancilla0);
     // Subtract N
-    addQFTval(regq, binArrayN)
+    addQFTval(regq, N);
     // Flip control qubit
     cx(regq[0], ancilla1);
     // Controlled reverse subtract N
-    binArrayN[binArryN.size()-1] = 1; // does this work?
-    caddQFTval(regq, ancilla1, binArrayN);
+    //binArrayN[binArryN.size()-1] = 1; // does this work?
+    csubQFTval(regq, ancilla1, ancillaAdd, N);
     // Clear control qubit
     cx(ancilla0, ancilla1);
     // Cleanup swap
@@ -80,8 +81,8 @@ void modMulval_s(std::vector<std::string> register0, std::vector<std::string> re
 
     }
 
-    std::vector<std::string> ancillasTemp(ancillas.begin(), ancillas.begin() + n + m);
-    std::vector<std::string> ancillasCalc(ancillas.begin() + n + m, ancillas.end());
+    std::vector<std::string> ancillasTemp(ancillas.begin(), ancillas.begin() + n + m1);
+    std::vector<std::string> ancillasCalc(ancillas.begin() + n + m1, ancillas.end());
 
     // Multiplication stage
     mulMAC_s(reg0, reg1, ancillasCalc, ancillasTemp);

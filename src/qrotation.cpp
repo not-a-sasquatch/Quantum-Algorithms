@@ -18,7 +18,7 @@ void qrx(std::vector<std::string> registerPhase, std::string target, std::string
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -41,7 +41,7 @@ void qrx(std::vector<std::string> registerPhase, std::string target, std::string
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 }
 
 // Single-qubit rotation about X-axis [[cos(x*s/2), -isin(x*s/2)];[-isin(x*s/2), cos(x*s/2)]], where x is an n-qubit signed quantum register [-2^(n-1), 2^(n-1)-1] and is scaled as 1/2^(n-1),
@@ -56,11 +56,12 @@ void cqrx(std::vector<std::string> registerPhase, std::string target, std::vecto
     int n = registerPhase.size();
 
     std::string ancillaToff = ancillas[0];
-    std::string ancillaControl = ancillas[0];
+    std::string ancillaControl = ancillas[1];
+    std::string ancillaQTC = ancillas[0];
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -83,7 +84,7 @@ void cqrx(std::vector<std::string> registerPhase, std::string target, std::vecto
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 }
 
 // Single-qubit rotation about Y-axis [[cos(x*s/2), -sin(x*s/2)];[sin(x*s/2), cos(x*s/2)]], where x is an n-qubit signed quantum register [-2^(n-1), 2^(n-1)-1] and is scaled as 1/2^(n-1),
@@ -98,7 +99,7 @@ void qry(std::vector<std::string> registerPhase, std::string target, std::string
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -121,7 +122,7 @@ void qry(std::vector<std::string> registerPhase, std::string target, std::string
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 }
 
 // Single-qubit rotation about Y-axis [[cos(x*s/2), -sin(x*s/2)];[sin(x*s/2), cos(x*s/2)]], where x is an n-qubit signed quantum register [-2^(n-1), 2^(n-1)-1] and is scaled as 1/2^(n-1),
@@ -136,11 +137,12 @@ void cqry(std::vector<std::string> registerPhase, std::string target, std::vecto
     int n = registerPhase.size();
 
     std::string ancillaToff = ancillas[0];
-    std::string ancillaControl = ancillas[0];
+    std::string ancillaControl = ancillas[1];
+    std::string ancillaQTC = ancillas[0];
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -163,7 +165,7 @@ void cqry(std::vector<std::string> registerPhase, std::string target, std::vecto
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 }
 
 // Single-qubit rotation about z-axis [[e^(-ix*s/2), 0];[0, e^(ix*s/2)]], where x is an n-qubit signed quantum register [-2^(n-1), 2^(n-1)-1] and is scaled as 1/2^(n-1),
@@ -178,7 +180,7 @@ void qrz(std::vector<std::string> registerPhase, std::string target, std::string
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -201,7 +203,7 @@ void qrz(std::vector<std::string> registerPhase, std::string target, std::string
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancilla);
 }
 
 // Single-qubit rotation about z-axis [[e^(-ix*s/2), 0];[0, e^(ix*s/2)]], where x is an n-qubit signed quantum register [-2^(n-1), 2^(n-1)-1] and is scaled as 1/2^(n-1),
@@ -216,11 +218,12 @@ void cqrz(std::vector<std::string> registerPhase, std::string target, std::vecto
     int n = registerPhase.size();
 
     std::string ancillaToff = ancillas[0];
-    std::string ancillaControl = ancillas[0];
+    std::string ancillaControl = ancillas[1];
+    std::string ancillaQTC = ancillas[0];
 
     // Take twos complement of phase if necessary
     std::vector<std::string> phaseData(regPhase.begin(), regPhase.end() - 1);
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 
     // If phase < 0
     for(int i = 0; i < n-1; i++){
@@ -243,5 +246,5 @@ void cqrz(std::vector<std::string> registerPhase, std::string target, std::vecto
     x(regPhase[n-1]);
 
     // Uncompute two's complement
-    cQTC(phaseData, regPhase[n-1]);
+    cQTC(phaseData, regPhase[n-1], ancillaQTC);
 }
