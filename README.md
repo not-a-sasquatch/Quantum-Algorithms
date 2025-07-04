@@ -27,15 +27,5 @@ Near term:
 Long term:
 - Write test scripts
 - Write lightweight simulator
-- Implement more algorithms 
+- Implement more algorithms (^. .^)
 
-$,_     _$
-$|\\_,-~/$
-$/ _  _ |    ,--.$
-$(  @  @ )  / ,-'$
-$\  _T_/-._( ($
-$/         `. \$
-$|         _  \ |$
-$\ \ ,  /      |$
-$  || |-_\__   /$
-$  ((_/`(____,-'$
